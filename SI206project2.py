@@ -1,7 +1,7 @@
 ## SI 206 W17 - Project 2
 
 ## COMMENT HERE WITH:
-## Your name:
+## Your name: Katarina Mazanka
 ## Anyone you worked with on this project:
 
 ## Below we have provided import statements, comments to separate out the 
@@ -14,6 +14,8 @@ import unittest
 import requests
 import re
 from bs4 import BeautifulSoup
+import urllib.request, urllib.parse, urllib.error
+import ssl
 
 
 ## Part 1 -- Define your find_urls function here.
@@ -27,7 +29,11 @@ from bs4 import BeautifulSoup
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
 def find_urls(s):
-    pass
+    
+
+    ##finds urls within the confines
+    urls = re.findall('https:\/\/\S+\.\S\S*\S|http:\/\/\S+\.\S\S*\S',s)
+    return(urls)
     #Your code here
 
 
@@ -36,10 +42,32 @@ def find_urls(s):
 ## INPUT: N/A. No input.
 ## Grab the headlines from the "Most Read" section of 
 ## http://www.michigandaily.com/section/opinion
-
+title_list = []
 def grab_headlines():
-    pass
-    #Your code here
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    url = 'http://www.michigandaily.com/section/opinion'
+    html = urllib.request.urlopen(url, context=ctx).read()
+    soup = BeautifulSoup(html, 'html.parser')
+    
+
+    words =  soup.findAll('div', attrs={'class':'item-list'})
+    
+    
+    for item in words[-1]:
+        for thing in item:
+            for layer2 in thing:
+                for layer3 in layer2:
+                    for title in layer2:
+                        title = str(title)
+                        title = title.strip()
+                        print(title)
+                        if title != '':
+                            title_list.append(title)
+    return(title_list)
+                        
+
 
 
 
