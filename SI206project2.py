@@ -3,7 +3,7 @@
 ## COMMENT HERE WITH:
 ## Your name: Katarina Mazanka
 ## Anyone you worked with on this project:
-
+##https://github.com/katmazan/206-Project2
 ## Below we have provided import statements, comments to separate out the 
 #parts of the project, instructions/hints/examples, and at the end, TESTS.
 
@@ -34,7 +34,7 @@ def find_urls(s):
     ##finds urls within the confines
     urls = re.findall('https:\/\/\S+\.\S\S*\S|http:\/\/\S+\.\S\S*\S',s)
     return(urls)
-    #Your code here
+    
 
 
 
@@ -62,7 +62,7 @@ def grab_headlines():
                     for title in layer2:
                         title = str(title)
                         title = title.strip()
-                        print(title)
+                        
                         if title != '':
                             title_list.append(title)
     return(title_list)
@@ -83,7 +83,7 @@ def grab_headlines():
 ## requests.get(base_url, headers={'User-Agent': 'SI_CLASS'}) 
 
 def get_umsi_data():
-    
+    ##amount of pages to go through
     count = 13
     info = {}
     
@@ -94,10 +94,12 @@ def get_umsi_data():
     
     
     soup = BeautifulSoup(r.text, 'html.parser')
+    ##going through the amount of pages
     for i in range(0,count):
         if i == 0:
            base_url = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
         else:
+            ##adding the page number to the end of the url
             base_url = base_url + '&page=' + str(i)
             
         r = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
@@ -108,25 +110,30 @@ def get_umsi_data():
         
         soup = BeautifulSoup(r.text, 'html.parser')
         words =  soup.findAll('h2')       
-        for thing in words:
-            for other in thing:
+        for head in words:
+            ##down to the text in the h2 headers
+            for other in head:
                 if str(other)[0] != '<':
                     other = str(other) 
                     names_lst.append(other)
         words2 = soup.find_all("div", class_="field-item even")
+        ##getting the child of the class
         for child in words2:
+            ##removing the text that is the names
             if str(child.text) not in names_lst:
-                
+                ##removing the items that are links
                 if str(child.text)[0] != '\n':
+                    ##removing the contact details
                     if str(child.text) != 'Contact Details\n':
-                    
+                        ##adding only the actual titles
                         title_lst.append(child.text) 
+        ##the first two items are from the header of the whole page
         del names_lst[0]
         del names_lst[0]
         del names_lst[-1]
 
         
-
+        ##creating the dictionary
         for name in names_lst:
             
                 
@@ -145,7 +152,9 @@ def get_umsi_data():
 def num_students(data):
     student_count = 0
     for item in data:
+        ##find all instances of student
         if data[item] == 'PhD student':
+            ##add them to the count
             student_count = student_count + 1
     return(student_count)
     
